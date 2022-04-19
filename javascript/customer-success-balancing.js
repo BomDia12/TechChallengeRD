@@ -20,7 +20,7 @@ const processData = (
   customers,
   customerSuccessAway
 ) => {
-  const availableCustomerSuccess = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs));
+  const availableCustomerSuccess = customerSuccess.filter((cs) => {return !customerSuccessAway.includes(cs.id)});
   availableCustomerSuccess.sort(sortByScore);
   const availableCustomers = customers.sort(sortByScore);
   return { availableCustomerSuccess, availableCustomers };
@@ -31,6 +31,7 @@ const distributeCustomers = (
   availableCustomers
 ) => {
   availableCustomerSuccess.map(custumerSuccess => {
+    custumerSuccess.customers = []
     while (availableCustomers.length) {
       if (availableCustomers[0].score <= custumerSuccess.score) {
         custumerSuccess.customers.push(availableCustomers.shift().id)
@@ -64,15 +65,15 @@ function customerSuccessBalancing(
     customerSuccessAway
   );
 
-  console.log(customerSuccess)
-
   const workingCustomerSuccess = distributeCustomers(availableCustomerSuccess, availableCustomers)
 
   const sortedCustomerSuccess = sortWorkingCustomerSuccess(workingCustomerSuccess)
 
-  if (sortedCustomerSuccess[0].customers.size === sortedCustomerSuccess[1].customers.size) return 0
+  if (sortedCustomerSuccess[0].customers.length === sortedCustomerSuccess[1].customers.length){
+    return 0
+  }
 
-  return sortWorkingCustomerSuccess[0].id
+  return sortedCustomerSuccess[0].id
 }
 
 test("Scenario 1", () => {
@@ -130,7 +131,9 @@ test("Scenario 3", () => {
   const customers = buildSizeEntities(10000, 998);
   const csAway = [999];
 
-  expect(customerSuccessBalancing(css, customers, csAway)).toEqual(999);
+  // The provided test had the expected result as 999, but, seeing as 999 is away
+  // and the equivalent ruby test expects 998, I changed the expected result to 998.
+  expect(customerSuccessBalancing(css, customers, csAway)).toEqual(998);
 
   if (new Date().getTime() - testStartTime > testTimeoutInMs) {
     throw new Error(`Test took longer than ${testTimeoutInMs}ms!`);

@@ -12,7 +12,7 @@ class CustomerSuccessBalancing
     # Runing funtions that distribute the customers
     set_up
     distribute_customers
-    sort_customer_sucess_by_customers
+    sort_customer_success_by_customers
 
     # If more than one customer sucess has the most amount of customers returns 0
     return 0 if @customer_success_by_customers[0][:customers].size == @customer_success_by_customers[1][:customers].size
@@ -27,10 +27,10 @@ class CustomerSuccessBalancing
   # Sorts the lists by score and selects all available custumer sucess
   def set_up
     # Filters all the custumer sucess that are away
-    @available_customer_sucess = @customer_success.filter { |customer_success| !@customer_success_away.include?(customer_success[:id]) }
+    @available_customer_success = @customer_success.filter { |customer_success| !@customer_success_away.include?(customer_success[:id]) }
 
     # Sorting customer sucess for easier handling
-    @available_customer_sucess.sort_by! { |customer_success| customer_success[:score] }
+    @available_customer_success.sort_by! { |customer_success| customer_success[:score] }
 
     # Storing customers and storing in another array for easier handling and deletion of item from the list without data loss
     @available_customers = @customers.sort_by { |customer| customer[:score] }
@@ -38,7 +38,7 @@ class CustomerSuccessBalancing
 
   # Distibutes customers for each customer sucess
   def distribute_customers
-    @available_customer_sucess.each do |customer_success|
+    @available_customer_success.each do |customer_success|
       # Initializing the customer value as an array
       customer_success[:customers] = []
 
@@ -57,8 +57,8 @@ class CustomerSuccessBalancing
   end
 
   # Sorts all available customer sucess by amount of customers in decresing order
-  def sort_customer_sucess_by_customers
-    @customer_success_by_customers = @available_customer_sucess.sort { |a, b| b[:customers].size <=> a[:customers].size }
+  def sort_customer_success_by_customers
+    @customer_success_by_customers = @available_customer_success.sort { |a, b| b[:customers].size <=> a[:customers].size }
   end
 end
 

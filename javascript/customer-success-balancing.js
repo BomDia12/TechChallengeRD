@@ -1,4 +1,52 @@
 /**
+ * Sorts the items in a list by their scores
+ * @param {integer} a
+ * @param {integer} b
+ */
+const sortByScore = (a, b) => {
+  return a.score - b.score;
+};
+
+/**
+ * Process the data, sorting and filtering it
+ * @param {array} customerSuccess
+ * @param {array} customers
+ * @param {array} customerSuccessAway
+ *
+ * @returns {object} availableCustomerSuccess, availableCustomers
+ */
+const processData = (
+  customerSuccess,
+  customers,
+  customerSuccessAway
+) => {
+  const availableCustomerSuccess = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs));
+  availableCustomerSuccess.sort(sortByScore);
+  const availableCustomers = customers.sort(sortByScore);
+  return { availableCustomerSuccess, availableCustomers };
+}
+
+const distributeCustomers = (
+  availableCustomerSuccess,
+  availableCustomers
+) => {
+  availableCustomerSuccess.map(custumerSuccess => {
+    while (availableCustomers.length) {
+      if (availableCustomers[0].score <= custumerSuccess.score) {
+        custumerSuccess.customers.push(availableCustomers.shift().id)
+      } else {
+        break
+      }
+    }
+  })
+  return availableCustomerSuccess
+};
+
+const sortWorkingCustomerSuccess = (customerSuccess) => {
+  return customerSuccess.sort((a, b) => b.customers.length - a.customers.length)
+}
+
+/**
  * Returns the id of the CustomerSuccess with the most customers
  * @param {array} customerSuccess
  * @param {array} customers
@@ -9,11 +57,22 @@ function customerSuccessBalancing(
   customers,
   customerSuccessAway
 ) {
-  /**
-   * ===============================================
-   * =========== Write your solution here ==========
-   * ===============================================
-   */
+
+  const { availableCustomerSuccess, availableCustomers } = processData(
+    customerSuccess,
+    customers,
+    customerSuccessAway
+  );
+
+  console.log(customerSuccess)
+
+  const workingCustomerSuccess = distributeCustomers(availableCustomerSuccess, availableCustomers)
+
+  const sortedCustomerSuccess = sortWorkingCustomerSuccess(workingCustomerSuccess)
+
+  if (sortedCustomerSuccess[0].customers.size === sortedCustomerSuccess[1].customers.size) return 0
+
+  return sortWorkingCustomerSuccess[0].id
 }
 
 test("Scenario 1", () => {
